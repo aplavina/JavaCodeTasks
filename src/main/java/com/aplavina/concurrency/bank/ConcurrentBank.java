@@ -1,12 +1,12 @@
 package com.aplavina.concurrency.bank;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ConcurrentBank {
     private AtomicLong idCounter = new AtomicLong(1);
-    private List<BankAccount> accounts = new ArrayList<>();
+    private List<BankAccount> accounts = new CopyOnWriteArrayList<>();
 
     public BankAccount createAccount(long initialBalance) {
         long id = idCounter.incrementAndGet();
@@ -16,8 +16,14 @@ public class ConcurrentBank {
     }
 
     public void transfer(BankAccount account1, BankAccount account2, long amount) {
-        account1.withdraw(amount);
-        account2.deposit(amount);
+        BankAccount first = account1.getId() < account2.getId() ? account1 : account2;
+        BankAccount second = account1.getId() < account2.getId() ? account2 : account1;
+        synchronized (first) {
+            synchronized (second) {
+                account1.withdraw(amount);
+                account2.deposit(amount);
+            }
+        }
     }
 
     public long getTotalBalance() {

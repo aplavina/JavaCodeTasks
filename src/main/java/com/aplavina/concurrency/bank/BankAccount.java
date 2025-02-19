@@ -12,11 +12,11 @@ public class BankAccount {
         this.balance = balance;
     }
 
-    public synchronized void deposit(long amount) {
+    public void deposit(long amount) {
         balance += amount;
     }
 
-    public synchronized void withdraw(long amount) {
+    public void withdraw(long amount) {
         if (amount > balance) {
             throw new IllegalArgumentException("Insufficient balance");
         }
@@ -27,7 +27,7 @@ public class BankAccount {
         return id;
     }
 
-    public synchronized long getBalance() {
+    public long getBalance() {
         return balance;
     }
 }
